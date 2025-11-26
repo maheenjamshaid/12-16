@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>12:16 — Private Diary</title>
+  <!-- Google Fonts: Great Vibes for headings, Quicksand for body -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --pink:#ffd7ec;
+      --deep-pink:#ff8fc7;
+      --lavender:#e9d7ff;
+      --purple:#bfa2ff;
+      --bg: linear-gradient(135deg,var(--pink),var(--lavender));
+      --accent: var(--deep-pink);
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      --radius: 16px;
+      font-family: 'Quicksand', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    /* Basic reset */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{background:var(--bg);background-attachment:fixed;min-height:100vh;color:#222}
+    /* decorative peony background (subtle) */
+    body::after{content:"";position:fixed;right:-10%;bottom:-10%;width:60vmax;height:60vmax;background:radial-gradient(circle at 30% 30%, rgba(255,230,240,0.55), transparent 30%), radial-gradient(circle at 70% 70%, rgba(230,220,255,0.45), transparent 30%);filter:blur(40px);pointer-events:none;z-index:0}
+
+    .container{max-width:1100px;margin:32px auto;padding:24px;position:relative;z-index:1}
+    .card{background:var(--glass);border-radius:var(--radius);box-shadow:var(--card-shadow);padding:18px;margin-bottom:18px}
+
+    header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--deep-pink),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-family:'Great Vibes';font-size:28px}
+    h1.title{font-family:'Great Vibes';font-size:36px;margin:0}
+
+    nav.menu{display:flex;gap:10px;flex-wrap:wrap}
+    nav.menu button{background:transparent;border:0;padding:8px 12px;border-radius:12px;font-weight:600;cursor:pointer}
+    nav.menu button.icon{display:flex;gap:8px;align-items:center}
+
+    /* Login overlay */
+    .overlay{position:fixed;inset:0;background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.55));display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+    .login{width:100%;max-width:480px;padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));box-shadow:0 10px 40px rgba(0,0,0,0.08);text-align:center}
+    .login h2{font-family:'Great Vibes';font-size:40px;margin:4px}
+    .login p{margin-top:0;color:#444}
+    .login input[type="password"]{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);margin-top:12px}
+    .login button{margin-top:12px;padding:10px 14px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--deep-pink),var(--purple));color:white;font-weight:700;cursor:pointer}
+
+    /* Dashboard layout */
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .main{padding:12px}
+    .sidebar{padding:12px}
+
+    /* Sections list */
+    .sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .section-card{border-radius:12px;padding:14px;background:linear-gradient(180deg,rgba(255,255,255,0.8),rgba(255,255,255,0.7));text-align:center}
+    .section-card h3{margin:8px 0 6px}
+    .icon-heart{font-size:22px}
+
+    /* Gallery masonry */
+    .gallery{column-count:3;column-gap:12px}
+    .gallery img{width:100%;display:block;margin-bottom:12px;border-radius:12px}
+    @media (max-width:900px){.gallery{column-count:2}}
+    @media (max-width:600px){.gallery{column-count:1}.grid{grid-template-columns:1fr}}
+
+    /* Timeline */
+    .timeline{display:flex;gap:24px;overflow-x:auto;padding:8px 4px}
+    .timeline .event{min-width:160px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.8));padding:12px;border-radius:12px;text-align:center}
+    .timeline .heart{font-size:18px}
+
+    /* Inputs & lists */
+    .list{list-style:none;padding:0;margin:0}
+    .list li{padding:8px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.6)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .controls input, .controls textarea{padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,0.06)}
+
+    footer.small{font-size:12px;color:#666;text-align:center;margin-top:12px}
+
+    /* tiny cute hearts */
+    .heart-burst{position:absolute;left:12px;top:12px;opacity:0.95}
+    .heart{display:inline-block;transform:translateY(0);transition:transform .25s ease}
+
+    /* personal section lock */
+    .locked{filter:blur(0.2px)}
+    .lock-overlay{background:rgba(255,255,255,0.7);border-radius:12px;padding:12px}
+
+    /* small helpers */
+    .muted{color:#666;font-size:13px}
+    .btn{padding:8px 12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--deep-pink),var(--purple));color:white;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="overlay" id="loginOverlay">
+    <div class="login card">
+      <div class="logo">12:16</div>
+      <h2>12:16</h2>
+      <p>Private diary — enter the password to continue</p>
+      <!-- Main password (your provided password) -->
+      <input id="mainPassword" type="password" placeholder="Enter password" aria-label="Password">
+      <button onclick="attemptLogin()">Enter</button>
+      <p class="muted">Tip: This site is designed for you and your partner only.</p>
+    </div>
+  </div>
+
+  <div class="container" id="siteContent" style="display:none">
+    <header class="top card">
+      <div class="brand">
+        <div class="logo">12:16</div>
+        <div>
+          <h1 class="title">12:16</h1>
+          <div class="muted">Our little pastel diary</div>
+        </div>
+      </div>
+      <nav class="menu">
+        <button class="icon" onclick="scrollToSection('dashboard')">🏠 Home</button>
+        <button class="icon" onclick="scrollToSection('wedding')">💍 Wedding</button>
+        <button class="icon" onclick="scrollToSection('dates')">🌙 Date Ideas</button>
+        <button class="icon" onclick="scrollToSection('todo')">✅ To-Do</button>
+        <button class="icon" onclick="scrollToSection('gallery')">🖼️ Gallery</button>
+        <button class="icon" onclick="scrollToSection('letters')">💌 Notes</button>
+        <button class="icon" onclick="scrollToSection('spotify')">🎧 Spotify</button>
+        <button class="icon" onclick="scrollToSection('timeline')">🫶 Timeline</button>
+      </nav>
+    </header>
+
+    <main class="grid">
+      <section class="main">
+        <!-- Dashboard -->
+        <section id="dashboard" class="card">
+          <div class="heart-burst">💖💜</div>
+          <h2 style="font-family:'Great Vibes'">Welcome</h2>
+          <p class="muted">This is 12:16 — your private space. Click any card to open that section. You can edit content manually by opening <code>index.html</code> in the repo and changing the HTML blocks.</p>
+          <div class="sections" aria-hidden="false">
+            <div class="section-card" onclick="scrollToSection('wedding')"><div class="icon-heart">💍</div><h3>Wedding Plans</h3></div>
+            <div class="section-card" onclick="scrollToSection('dates')"><div class="icon-heart">🌙</div><h3>Date Ideas</h3></div>
+            <div class="section-card" onclick="scrollToSection('todo')"><div class="icon-heart">✅</div><h3>To-Do Together</h3></div>
+            <div class="section-card" onclick="scrollToSection('gallery')"><div class="icon-heart">🖼️</div><h3>Photo Gallery</h3></div>
+            <div class="section-card" onclick="scrollToSection('letters')"><div class="icon-heart">💌</div><h3>Love Letters</h3></div>
+            <div class="section-card" onclick="scrollToSection('spotify')"><div class="icon-heart">🎧</div><h3>Spotify Playlist</h3></div>
+            <div class="section-card" onclick="scrollToSection('timeline')"><div class="icon-heart">🫶</div><h3>Timeline</h3></div>
+            <div class="section-card" onclick="scrollToSection('maheen')"><div class="icon-heart">🌸</div><h3>Maheen</h3></div>
+            <div class="section-card" onclick="scrollToSection('zeeshan')"><div class="icon-heart">🌿</div><h3>Zeeshan</h3></div>
+          </div>
+        </section>
+
+        <!-- Wedding Plans -->
+        <section id="wedding" class="card">
+          <h2>Wedding Plans</h2>
+          <p class="muted">Edit items below directly in the HTML to update.</p>
+          <ul id="weddingList" class="list">
+            <li>Venue research</li>
+            <li>Guest list draft</li>
+            <li>Theme ideas: pastel peonies, garden</li>
+          </ul>
+        </section>
+
+        <!-- Date Ideas -->
+        <section id="dates" class="card">
+          <h2>Date Ideas</h2>
+          <ul id="dateList" class="list">
+            <li>Picnic in the park</li>
+            <li>Cook a new recipe together</li>
+          </ul>
+        </section>
+
+        <!-- To-Do -->
+        <section id="todo" class="card">
+          <h2>To-Do Together</h2>
+          <ul id="todoList" class="list">
+            <li>Plan honeymoon</li>
+            <li>Book dress fitting</li>
+          </ul>
+        </section>
+
+        <!-- Gallery -->
+        <section id="gallery" class="card">
+          <h2>Photo Gallery</h2>
+          <p class="muted">Add image files to your repository in an <code>/images</code> folder and then add <code>&lt;img src="images/yourphoto.jpg"&gt;</code> into this section. The gallery uses a Masonry-style column layout.</p>
+          <div class="gallery" id="galleryGrid">
+            <!-- Example placeholders. Replace or remove when uploading your images. -->
+            <img src="https://via.placeholder.com/600x800?text=Add+Your+Photos" alt="placeholder">
+            <img src="https://via.placeholder.com/600x400?text=Add+Your+Photos" alt="placeholder">
+            <img src="https://via.placeholder.com/400x600?text=Add+Your+Photos" alt="placeholder">
+          </div>
+        </section>
+
+        <!-- Love Letters -->
+        <section id="letters" class="card">
+          <h2>Love Letters / Notes</h2>
+          <div>
+            <article style="margin-bottom:12px;background:linear-gradient(180deg,#fff9fb,#fff5ff);padding:12px;border-radius:12px">
+              <strong>Maheen</strong>
+              <p>Write letters here. Replace this text in the HTML as you like.</p>
+            </article>
+            <article style="margin-bottom:12px;background:linear-gradient(180deg,#fff9fb,#fff5ff);padding:12px;border-radius:12px">
+              <strong>Zeeshan</strong>
+              <p>Write letters here. Replace this text in the HTML as you like.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- Spotify -->
+        <section id="spotify" class="card">
+          <h2>Spotify — "Lover" & Playlist</h2>
+          <p class="muted">Background music iframe (you can remove autoplay if you'd prefer).</p>
+          <!-- Embedded track you requested (plays in page). -->
+          <div style="border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow)">
+            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/1dGr1c8CrMLDpV6mPbImSI?utm_source=generator" width="100%" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+
+          <h3 style="margin-top:12px">Playlist quick open + QR</h3>
+          <p class="muted">Click the button to open the playlist in Spotify, or scan the QR code below from your phone.</p>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <button class="btn" onclick="openPlaylist()">Open Playlist</button>
+            <!-- QR generated via external free service. Replace the URL with your playlist URL if different. -->
+            <img id="playlistQR" alt="QR code" style="width:120px;height:120px;border-radius:12px;border:6px solid white;box-shadow:var(--card-shadow)">
+          </div>
+        </section>
+
+        <!-- Timeline -->
+        <section id="timeline" class="card">
+          <h2>Timeline</h2>
+          <p class="muted">Horizontal visual timeline — edit the event nodes in the HTML below.</p>
+          <div class="timeline" id="timelineRow">
+            <div class="event"><div class="heart">💖</div><h4>Met</h4><small>2018-06-12</small></div>
+            <div class="event"><div class="heart">💜</div><h4>First date</h4><small>2018-07-01</small></div>
+            <div class="event"><div class="heart">🫶</div><h4>Engaged</h4><small>2024-11-01</small></div>
+          </div>
+        </section>
+
+        <!-- Important Dates & Goals -->
+        <section id="datesImportant" class="card">
+          <h2>Important Dates & Goals</h2>
+          <ul class="list">
+            <li>Anniversary: 2025-04-02</li>
+            <li>Wedding: TBD</li>
+          </ul>
+        </section>
+
+        <!-- Personal sections (locked separately) -->
+        <section id="maheen" class="card">
+          <h2>Maheen — Personal</h2>
+          <div id="maheenLocked" class="lock-overlay">
+            <p class="muted">This section is locked. Click to unlock with the owner password (you can set it after).</p>
+            <button class="btn" onclick="unlockPersonal('maheen')">Unlock Maheen</button>
+          </div>
+          <div id="maheenContent" style="display:none">
+            <p class="muted">Private notes for Maheen. Edit this content directly in index.html when you want to change it permanently.</p>
+          </div>
+        </section>
+
+        <section id="zeeshan" class="card">
+          <h2>Zeeshan — Personal</h2>
+          <div id="zeeshanLocked" class="lock-overlay">
+            <p class="muted">This section is locked. Click to unlock with the owner password (you can set it after).</p>
+            <button class="btn" onclick="unlockPersonal('zeeshan')">Unlock Zeeshan</button>
+          </div>
+          <div id="zeeshanContent" style="display:none">
+            <p class="muted">Private notes for Zeeshan. Edit this content directly in index.html when you want to change it permanently.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <aside class="sidebar">
+        <div class="card">
+          <h3>Quick Add (local only)</h3>
+          <p class="muted">Add a quick note that persists in your browser (localStorage). For permanent updates, edit index.html in your repo.</p>
+          <div class="controls">
+            <input id="quickTxt" placeholder="Write a short note">
+            <button class="btn" onclick="addQuickNote()">Add</button>
+          </div>
+          <ul id="quickList" class="list" style="margin-top:12px"></ul>
+        </div>
+
+        <div class="card">
+          <h3>Settings</h3>
+          <p class="muted">Main password is pre-set (the one you gave). You can change it here (this only updates browser-local password). For stronger privacy, change the password inside the code or set up server-side auth.</p>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="newMainPass" placeholder="Change main password">
+            <button class="btn" onclick="changeMainPassword()">Save</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>How to add images</h3>
+          <ol class="muted">
+            <li>Create an <code>images</code> folder in your repo.
+            <li>Upload image files (e.g. <code>photo1.jpg</code>).</li>
+            <li>Add <code>&lt;img src="images/photo1.jpg"&gt;</code> inside the &lt;div id="galleryGrid"&gt; section in index.html.</li>
+          </ol>
+        </div>
+
+        <div class="card small">
+          <small>Made with 💗 — Edit the HTML in the repo to customize anything. If you want, I can also add a simple README with GitHub instructions.</small>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="container small">&copy; 12:16 — Private diary</footer>
+  </div>
+
+  <script>
+    // === INITIAL PASSWORD (from your message) ===
+    let MAIN_PASSWORD = 'i blahblah you so much'; // change this in code if you want
+
+    // placeholders for personal section passwords (set later in-browser if needed)
+    let personalPasswords = {maheen: null, zeeshan: null};
+
+    function attemptLogin(){
+      const val = document.getElementById('mainPassword').value.trim();
+      if(val === MAIN_PASSWORD){
+        document.getElementById('loginOverlay').style.display='none';
+        document.getElementById('siteContent').style.display='block';
+        // build QR
+        buildQR();
+        loadQuickNotes();
+      } else {
+        alert('Incorrect password — please try again.');
+      }
+    }
+
+    function scrollToSection(id){
+      const el = document.getElementById(id);
+      if(el){ el.scrollIntoView({behavior:'smooth',block:'start'}); }
+    }
+
+    function openPlaylist(){
+      // change this if your playlist url differs
+      const url = 'https://open.spotify.com/playlist/';
+      window.open(url, '_blank');
+    }
+
+    function buildQR(){
+      // QR points to the playlist URL (change the url variable if you want a specific playlist)
+      const playlistURL = encodeURIComponent('https://open.spotify.com/playlist/');
+      const qrImg = document.getElementById('playlistQR');
+      // using free qrserver API
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${playlistURL}`;
+    }
+
+    // Quick notes using localStorage (simple temporary feature)
+    function addQuickNote(){
+      const t = document.getElementById('quickTxt');
+      const val = t.value.trim();
+      if(!val) return;
+      const notes = JSON.parse(localStorage.getItem('quickNotes')||'[]');
+      notes.unshift({text:val,ts:Date.now()});
+      localStorage.setItem('quickNotes', JSON.stringify(notes));
+      t.value='';
+      loadQuickNotes();
+    }
+    function loadQuickNotes(){
+      const list = document.getElementById('quickList');
+      const notes = JSON.parse(localStorage.getItem('quickNotes')||'[]');
+      list.innerHTML = notes.map(n=>`<li>${new Date(n.ts).toLocaleString()} — ${escapeHtml(n.text)}</li>`).join('');
+    }
+
+    function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function changeMainPassword(){
+      const v = document.getElementById('newMainPass').value.trim();
+      if(!v){ alert('Enter a password'); return }
+      MAIN_PASSWORD = v; // note: only in-memory — to make persistent, change the string in index.html
+      alert('Main password updated locally. To persist it for everyone, change the MAIN_PASSWORD value in index.html file in your repo.');
+    }
+
+    // Personal section unlocking (simple prompt-based). For stronger security implement server-side auth.
+    function unlockPersonal(name){
+      const setKey = 'personalPass_'+name;
+      let pwd = localStorage.getItem(setKey);
+      if(!pwd){
+        // ask to create password
+        const create = prompt(`Set a password for ${name} (this saves in your browser). Leave blank to cancel.`);
+        if(create){ localStorage.setItem(setKey, create); pwd = create; alert('Password set locally. Next time use the Unlock button and enter it.'); }
+        else return;
+      }
+      const attempt = prompt('Enter password to unlock ' + name + ':');
+      if(attempt === pwd){
+        document.getElementById(name+'Locked').style.display='none';
+        document.getElementById(name+'Content').style.display='block';
+      } else {
+        alert('Wrong password.');
+      }
+    }
+
+    // small helper to ensure placeholder images won't block layout
+    window.addEventListener('load', ()=>{
+      // nothing additional for now
+    })
+  </script>
+
+  <!-- NOTES: 
+    * This is a single-file static site (index.html). To publish on GitHub Pages, create a new repo named e.g. "12-16" and upload this as index.html then enable Pages on the main branch (root).
+    * To add real images: create an "images" folder in your repo and add <img src="images/yourphoto.jpg"> to the gallery section.
+    * To change the main login password permanently: edit the MAIN_PASSWORD value in the script near the top of the file.
+    * The personal section passwords are stored in the browser's localStorage (only visible on the device used to create them). If you want cross-device private areas, you'll need a server or password-sharing approach.
+    * If you'd like, I can also split the file into separate assets and create a README with exact GitHub steps.
+  -->
+</body>
+</html>
